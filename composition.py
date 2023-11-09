@@ -1,5 +1,6 @@
 from client import avg, count, count0, _pretty_print
 from dp import dp_histogram
+import numpy as np
 
 # This function should expose the true value of some aggregate/query
 # by abusing the fact that you can make many such queries.
@@ -27,9 +28,7 @@ def expose(query_func):
   # This generates a single table with `rows` rows; your task is to use
   # `many_results` to compute each row's aggregation value.
   for r in range(0, rows):
-    # TODO: compute the actual value of row r, given all the noised values from
-    # making many queries.
-    value = "?"
+    value = round(np.average([many_results[i][r][-1] for i in range(num_iterations)]))
     
     # Append value and attached label to exposed result.
     labels = tuple(many_results[0][r][:-1])
@@ -41,27 +40,23 @@ if __name__ == "__main__":
   # For testing: if your expose function works, then you should be able
   # to expose the original results of the age and music histogram from 
   # the noised data.
-  print("TESTING: the two histograms should be (almost) equal.\n")
+  # print("TESTING: the two histograms should be (almost) equal.\n")
 
-  print("Non-noised histogram (from part 1):")
-  headers, result = count(["age", "music"], False)
-  _pretty_print(headers, result)
+  # print("Non-noised histogram (from part 1):")
+  # headers, result = count(["age", "music"], False)
+  # _pretty_print(headers, result)
 
-  headers, result = expose(lambda: dp_histogram(0.5))
-  _pretty_print(headers, result)  
+  # headers, result = expose(lambda: dp_histogram(0.5))
+  # _pretty_print(headers, result)  
 
   # Expose the average age per programming level.
-  '''
   print("Exposing average:")
   headers, result = expose(lambda: avg(["programming"], "age", True))
   _pretty_print(headers, result)
   print("")
-  '''
   
   # Expose the count of people per programming level.
-  '''
   print("Exposing count:")
   headers, result = expose(lambda: count0(["programming"], True))
   _pretty_print(headers, result)
   print("")
-  '''
